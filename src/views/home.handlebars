@@ -1,0 +1,26 @@
+<h1>Bienvenido a la {{title}}</h1>
+
+<h3>Nuestros productos:</h3>
+
+<ul>
+    {{#each dulces}}
+        <li>
+            <strong>{{this.nombre}}</strong> - ${{this.precio}} 
+            <button class="eliminar"><a href="/borrar/{{this.id}}">Eliminar</a></button>
+            <button class="vender"><a href="/vender/{{this.id}}" >Vender </a></button>
+        </li>
+    {{/each}}
+</ul>
+
+<hr>
+
+
+<form action="/agregar" method="POST">
+<h2>Añadir nuevo dulce 🍡</h2>
+    <input type="text" name="nombre" placeholder="Nombre del dulce" required>
+    <input type="number" name="precio" placeholder="Precio" step="0.01" required>
+    <input type="number" name="stock" placeholder="Stock" required>
+    <button type="submit">Guardar Dulce</button>
+</form>
+
+
