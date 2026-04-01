@@ -13,7 +13,10 @@ La aplicación consiste en un servidor desarrollado con **Node.js** y **Express*
 El objetivo de esta etapa es construir la base del sistema backend que posteriormente se conectará a una base de datos y expondrá una API segura.
 
 ### Enfoque del proyecto
+
 Backend para una tienda de dulces que permite gestionar usuarios y, en futuras etapas, productos y pedidos.
+
+---
 
 ## Tecnologías utilizadas
 
@@ -21,6 +24,8 @@ Backend para una tienda de dulces que permite gestionar usuarios y, en futuras e
 * Express.js
 * Nodemon
 * Dotenv
+* PostgreSQL
+* Handlebars
 
 ---
 
@@ -59,7 +64,7 @@ La carpeta **src** contiene todo el código fuente de la aplicación.
 1. Clonar el repositorio:
 
 ```
-git clone <https://github.com/yasclou/proyecto-6-7-8.git>
+git clone https://github.com/yasclou/proyecto-6-7-8.git
 ```
 
 2. Instalar dependencias:
@@ -94,7 +99,13 @@ Archivo `.env`
 
 ```
 PORT=3000
+DB_HOST=
+DB_USER=
+DB_PASSWORD=
+DB_NAME=
 ```
+
+Las credenciales se gestionan mediante variables de entorno para evitar exponer información sensible en el código fuente.
 
 ---
 
@@ -106,7 +117,9 @@ PORT=3000
 GET /
 ```
 
-Devuelve una respuesta en HTML indicando que el servidor está funcionando.
+Devuelve una vista HTML indicando que el servidor está funcionando.
+
+---
 
 ### Estado del servidor
 
@@ -114,9 +127,7 @@ Devuelve una respuesta en HTML indicando que el servidor está funcionando.
 GET /status
 ```
 
-Devuelve una respuesta en formato JSON con el estado del servidor.
-
-Ejemplo:
+Devuelve el estado del servidor en formato JSON:
 
 ```
 {
@@ -127,9 +138,68 @@ Ejemplo:
 
 ---
 
+## CRUD de usuarios
+
+Se implementó un CRUD completo sobre la entidad usuarios con persistencia en base de datos.
+
+### Obtener usuarios
+
+```
+GET /usuarios
+```
+
+### Crear usuario
+
+```
+POST /usuarios
+```
+
+### Actualizar usuario
+
+```
+PUT /usuarios/:id
+```
+
+### Eliminar usuario
+
+```
+DELETE /usuarios/:id
+```
+
+### Consideraciones
+
+* Se validan errores de conexión y consultas.
+* Se verifica la existencia del usuario antes de modificar o eliminar.
+* Se excluyen datos sensibles (como contraseñas) en las respuestas.
+* Las respuestas se entregan en formato JSON estructurado.
+
+---
+
+## Acceso a base de datos
+
+Se trabajó directamente con PostgreSQL mediante consultas SQL utilizando un pool de conexiones.
+
+Se decidió no utilizar un ORM, ya que el proyecto ya contaba con una implementación funcional y esto permitió:
+
+* Mayor control sobre las consultas
+* Mejor comprensión del funcionamiento de la base de datos
+* Menor complejidad para la escala del proyecto
+
+---
+
+## Transaccionalidad
+
+Se implementaron operaciones que agrupan múltiples acciones consecutivas, asegurando consistencia de datos.
+
+* Uso de transacciones
+* Rollback en caso de error
+* Registro de éxito o fallo en logs
+
+---
+
 ## Registro de eventos
 
-El sistema registra accesos a rutas específicas en el archivo:
+El sistema registra accesos y eventos en:
 
 ```
 src/logs/log.txt
@@ -137,112 +207,66 @@ src/logs/log.txt
 
 Cada registro incluye:
 
-* fecha
-* hora
-* ruta accedida
+* Fecha
+* Hora
+* Ruta accedida
+* Resultado de la operación
+
+---
+
+## Renderizado con Handlebars
+
+Se integró un motor de vistas que permite:
+
+* Renderizar contenido dinámico en el servidor
+* Mostrar información de forma estructurada
+* Mejorar la experiencia del usuario
 
 ---
 
 ## Justificación técnica
 
-Se eligió utilizar **index.js** como archivo principal debido a que es ampliamente utilizado en proyectos Node.js para como punto de entrada de la aplicación.
+Se utilizó `index.js` como punto de entrada por ser una convención estándar en aplicaciones Node.js.
 
-La estructura modular del proyecto (controllers, routes, middlewares, services) permite escalar la aplicación fácilmente en futuras etapas, facilitando la integración con bases de datos, autenticación JWT y una API REST completa.
+La estructura modular (controllers, routes, middlewares) permite escalar el proyecto fácilmente, facilitando la incorporación de nuevas funcionalidades como autenticación, productos y pedidos.
 
-Se definieron dos scripts principales para ejecutar la aplicación:
+El uso de nodemon en desarrollo mejora la eficiencia al reiniciar automáticamente el servidor ante cambios.
 
-- "npm start": ejecuta el servidor utilizando Node.js, pensado para entornos de producción.
-- "npm run dev": utiliza nodemon para reiniciar automáticamente el servidor durante el desarrollo, mejorando la eficiencia al evitar reinicios manuales.
-
+El uso de SQL directo fue una decisión consciente para mantener control total sobre las consultas y evitar complejidad innecesaria.
 
 ---
 
 ## Estado del proyecto
 
-Primera etapa completada:
-Servidor Express funcional con rutas básicas, contenido estático y persistencia simple mediante archivos.
+Segunda etapa completada:
 
+* Conexión a base de datos funcional
+* CRUD completo implementado
+* Validaciones y manejo de errores
+* Sistema de logs
+* Renderizado dinámico con vistas
 
-# PROYECTO 7
-
-## Se utilizó Sequelize como ORM 
-para facilitar la conexión con PostgreSQL y la manipulación de datos mediante modelos.
-
-Las credenciales de acceso se almacenaron en variables de entorno utilizando dotenv, evitando exponer información sensible en el código fuente.
-
-## Se utilizó Sequelize para definir el modelo User 
-lo que permite mapear la tabla usuarios desde código JavaScript y facilitar la manipulación de datos sin necesidad de escribir consultas SQL manuales.
-
-## Se implementó una ruta POST /usuarios que permite registrar nuevos usuarios en la base de datos
-Se utilizó express.json() para procesar datos en formato JSON enviados desde el cliente.
-Esto permite separar la lógica del backend del cliente, siguiendo principios de arquitectura REST.
-
-## CRUD
-Se implementaron operaciones CRUD parciales sobre la entidad usuarios, incluyendo lectura (GET) y creación (POST) con persistencia en base de datos PostgreSQL mediante Sequelize.
-
-### Requisitos del sistema
-- Node.js ≥ 18  
-- PostgreSQL ≥ 15  
-- npm ≥ 9  
+El proyecto queda preparado para evolucionar hacia una API REST completa en siguientes módulos.
 
 ---
 
-## Se integró un motor de vistas con Handlebars
-permitiendo renderizado dinámico en el servidor y mejorando la experiencia del usuario al visualizar productos directamente en el navegador
+## Requisitos del sistema
 
-## Se implementó un sistema de renderizado dinámico utilizando Handlebars
-junto con un carrito de compras funcional gestionado en el servidor, integrando lógica de negocio mediante servicios y manteniendo una arquitectura basada en el patrón MVC.
-
-## Uso de pool en Postgres
-permite manejar múltiples conexiones de forma eficiente sin saturar la base de datos.
+* Node.js ≥ 18
+* PostgreSQL ≥ 15
+* npm ≥ 9
 
 
-### Instalación
-1. Clonar el repositorio:
-```bash
-git clone <tu-url-de-github>
-   cd "tienda de dulces"
-Instalar dependencias:
-npm install
-Crear archivo .env con las credenciales de la base de datos:
-DB_USER=tu_usuario_postgres
-DB_PASSWORD=tu_contraseña_de_pgadmin
-DB_HOST=localhost
-DB_DATABASE=tienda_dulces
-DB_PORT=5432
-PORT=3000
-Iniciar el servidor en modo desarrollo:
-npm run dev
+## Reflexión técnica
 
+Durante el desarrollo de esta etapa del proyecto se implementó un backend funcional enfocado en la gestión de dulces e inventario, incorporando operaciones CRUD completas y conexión a una base de datos relacional.
 
-🚀 Uso
-Endpoints principales
-Método	Ruta	Descripción
-GET	/	Página de inicio
-GET	/status	Estado del servidor (JSON)
-GET	/usuarios	Listar usuarios (sin passwords)
-POST	/usuarios	Crear un usuario
-PUT	/usuarios/:id	Actualizar usuario por ID
-DELETE	/usuarios/:id	Eliminar usuario por ID
-POST	/usuarios/history	Crear usuario + historial (transacción)
+Uno de los principales desafíos fue lograr una conexión estable con la base de datos y mantener la consistencia de los datos al realizar operaciones de creación, actualización y eliminación. Para resolverlo, se trabajó con consultas SQL directas y el uso de un pool de conexiones, lo que permitió mejorar la eficiencia y estabilidad del sistema.
 
-Ejemplo de JSON para POST/PUT:
+Se decidió no utilizar un ORM como Sequelize, optando por consultas SQL manuales. Esta decisión se tomó para mantener un mayor control sobre las operaciones realizadas y comprender mejor el funcionamiento interno de la base de datos. Además, considerando la escala del proyecto, se evaluó que no era necesario agregar una capa adicional de abstracción.
 
-```
-{
-  "nombre de dulce": "Mochi",
-  "precio": "9,00",
-  "stock": "1000"
-}
-```
+En cuanto a la organización del código, se utilizó una estructura modular basada en controladores, rutas y middlewares, lo que facilita la escalabilidad y el mantenimiento del proyecto. También se incorporó un sistema de logs para registrar eventos relevantes y apoyar el proceso de depuración.
 
-**Justificación técnica
-Cliente de conexión: Se eligió Sequelize por su facilidad de manejar ORM, transacciones y relaciones entre modelos.
-Protección de datos sensibles: Las contraseñas no se muestran en la respuesta (attributes: ["id","nombre","email"]) y las credenciales de DB se almacenan en .env.
-Transacciones: Se usan para crear usuario + historial, asegurando rollback si falla algún paso.
-Estructura de carpetas: Separación clara en controllers/, routes/, models/, config/ y public/ para mantener el proyecto organizado y escalable.
+Como mejora futura, se considera la posibilidad de integrar un ORM, implementar autenticación de usuarios y ampliar la lógica de negocio hacia la gestión completa de pedidos.
 
-**Nota
-El archivo log.txt registra visitas a rutas públicas con fecha y hora.
-Se pueden agregar paginación o filtros en /usuarios como mejoras futuras.
-Las vistas dinámicas podrían implementarse con EJS para la parte frontend.
+En conclusión, esta etapa permitió consolidar conocimientos sobre el manejo de bases de datos, estructuración de backend y buenas prácticas en el desarrollo de aplicaciones con Node.js.
