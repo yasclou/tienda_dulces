@@ -64,7 +64,7 @@ La carpeta **src** contiene todo el código fuente de la aplicación.
 1. Clonar el repositorio:
 
 ```
-git clone https://github.com/yasclou/proyecto-6-7-8.git
+git clone https://github.com/yasclou/tienda_dulces.git
 ```
 
 2. Instalar dependencias:
@@ -131,8 +131,8 @@ Devuelve el estado del servidor en formato JSON:
 
 ```
 {
-  "status": "ok",
-  "message": "Servidor activo"
+  "status": "🐘 Conectado a la base de datos "tienda_dulces"",
+  "message": "✅ Servidor iniciado en http://localhost:3000"
 }
 ```
 
@@ -142,28 +142,28 @@ Devuelve el estado del servidor en formato JSON:
 
 Se implementó un CRUD completo sobre la entidad usuarios con persistencia en base de datos.
 
-### Obtener usuarios
+### Obtener producto
 
 ```
-GET /usuarios
+GET /nombres de dulces
 ```
 
-### Crear usuario
+### Crear producto
 
 ```
-POST /usuarios
+POST /nombres de dulces
 ```
 
-### Actualizar usuario
+### Actualizar producto
 
 ```
-PUT /usuarios/:id
+PUT /nombres de dulces/:id
 ```
 
-### Eliminar usuario
+### Eliminar producto
 
 ```
-DELETE /usuarios/:id
+DELETE /nombres de dulces/:id
 ```
 
 ### Consideraciones
