@@ -6,14 +6,18 @@ async function agregarDulceConLog(dulce) {
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
+    
+    // Agregamos la columna 'imagen' y el parámetro $4
     await client.query(
-      'INSERT INTO dulces (nombre, precio, stock) VALUES ($1, $2, $3)',
-      [dulce.nombre, dulce.precio, dulce.stock]
+      'INSERT INTO dulces (nombre, precio, stock, imagen) VALUES ($1, $2, $3, $4)',
+      [dulce.nombre, dulce.precio, dulce.stock, dulce.imagen] // <--- ¡No olvides el dulce.imagen!
     );
+    
     await client.query('COMMIT');
+    
     fs.appendFileSync(
       'src/logs/log.txt',
-      `Se agregó dulce: ${dulce.nombre} - ${new Date()}\n`
+      `Se agregó dulce: ${dulce.nombre} (Imagen: ${dulce.imagen}) - ${new Date()}\n`
     );
   } catch (err) {
     await client.query('ROLLBACK');

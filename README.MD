@@ -270,3 +270,8 @@ En cuanto a la organización del código, se utilizó una estructura modular bas
 Como mejora futura, se considera la posibilidad de integrar un ORM, implementar autenticación de usuarios y ampliar la lógica de negocio hacia la gestión completa de pedidos.
 
 En conclusión, esta etapa permitió consolidar conocimientos sobre el manejo de bases de datos, estructuración de backend y buenas prácticas en el desarrollo de aplicaciones con Node.js.
+
+## API
+Para usar la API, primero autenticarse en /dulces/login. El token obtenido debe enviarse en el header Authorization como Bearer <token> para las rutas protegidas
+
+se decidio usar SQL puro para tener control total de los datos y se implemento JWT para asegurar que solo usuarios registrados puedan modificar el stock de dulces.

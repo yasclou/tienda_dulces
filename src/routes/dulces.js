@@ -1,5 +1,9 @@
 const express = require('express');
 const router = express.Router();
+const verificarToken = require('../middlewares/authMiddleware');
+const upload = require('../middlewares/uploadMiddleware');
+const { login } = require('../controllers/authController');
+
 const {
   agregarDulceConLog,
   obtenerDulces,
@@ -7,7 +11,13 @@ const {
   eliminarDulce
 } = require('../services/servicesDulces');
 
-// GET /dulces → lista todos los dulces
+// --- 1. RUTA DE AUTENTICACIÓN (NUEVA) ---
+// Esta ruta sirve para obtener el "pase VIP" (Token)
+router.post('/login', login);
+
+// --- 2. RUTAS PÚBLICAS ---
+
+// GET /dulces → lista todos los dulces (Cualquiera puede verlos)
 router.get('/', async (req, res) => {
   try {
     const dulces = await obtenerDulces();
@@ -17,33 +27,48 @@ router.get('/', async (req, res) => {
   }
 });
 
-// POST /dulces → agrega un dulce
-router.post('/', async (req, res) => {
+// --- 3. RUTAS PROTEGIDAS Y CON ARCHIVOS (NUEVAS) ---
+
+// POST /dulces → agrega un dulce + SUBIR FOTO
+// Usamos 'upload.single' para la foto y 'verificarToken' para seguridad
+router.post('/', verificarToken, upload.single('foto'), async (req, res) => {
   try {
-    await agregarDulceConLog(req.body);
-    res.redirect('/'); // vuelve a la página principal
+    // Si se subió una foto, guardamos el nombre del archivo en el body
+    const datosDulce = {
+      ...req.body,
+      imagen: req.file ? req.file.filename : 'default.jpg'
+    };
+    
+    await agregarDulceConLog(datosDulce);
+    
+    // Como es una API, en lugar de redirect, devolvemos un JSON
+    res.status(201).json({ 
+      status: "success", 
+      message: "Dulce agregado con éxito",
+      data: datosDulce 
+    });
   } catch (err) {
-    res.status(500).send("Error al agregar dulce: " + err.message);
+    res.status(500).json({ status: "error", message: err.message });
   }
 });
 
-// PUT /dulces/:id → actualiza un dulce
-router.put('/:id', async (req, res) => {
+// PUT /dulces/:id → actualiza un dulce (Protegido con JWT)
+router.put('/:id', verificarToken, async (req, res) => {
   try {
     await actualizarDulce(req.params.id, req.body);
-    res.json({ message: 'Dulce actualizado correctamente' });
+    res.json({ status: "success", message: 'Dulce actualizado correctamente' });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ status: "error", error: err.message });
   }
 });
 
-// DELETE /dulces/:id → elimina un dulce
-router.delete('/:id', async (req, res) => {
+// DELETE /dulces/:id → elimina un dulce (Protegido con JWT)
+router.delete('/:id', verificarToken, async (req, res) => {
   try {
     await eliminarDulce(req.params.id);
-    res.json({ message: 'Dulce eliminado correctamente' });
+    res.json({ status: "success", message: 'Dulce eliminado correctamente' });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ status: "error", error: err.message });
   }
 });
 

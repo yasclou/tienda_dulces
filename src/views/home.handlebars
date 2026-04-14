@@ -5,6 +5,7 @@
 <ul>
     {{#each dulces}}
         <li>
+          <img src="/uploads/{{this.imagen}}" alt="{{this.nombre}}" style="width: 230px;">
             <strong>{{this.nombre}}</strong> - ${{this.precio}} 
             <button class="eliminar"><a href="/borrar/{{this.id}}">Eliminar</a></button>
             <button class="vender">{{#if stock}}
